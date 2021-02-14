@@ -1,0 +1,27 @@
+{
+    "name": "vriska-wake-up-pixi",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "gulp dev",
+        "build": "gulp build",
+        "images": "gulp images"
+    },
+    "author": "MadCreativity",
+    "license": "MIT",
+    "dependencies": {
+        "@babel/core": "^7.12.16",
+        "@babel/preset-env": "^7.12.16",
+        "babel-plugin-minify-mangle-names": "^0.5.0",
+        "canvas": "^2.6.1",
+        "gif-frames": "^1.0.1",
+        "gulp": "^4.0.2",
+        "gulp-babel": "^8.0.0",
+        "gulp-connect": "^5.7.0",
+        "gulp-htmlmin": "^5.0.1",
+        "gulp-imagemin": "^7.1.0",
+        "gulp-minify": "^3.1.0",
+        "stream-to-array": "^2.3.0"
+    }
+}

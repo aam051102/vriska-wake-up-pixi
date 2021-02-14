@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="generator" content="PixiAnimate Extension">
+        <title>Act Omega | [S] Vriska: W8ke Up.</title>
+
+        <style>
+            body {
+                margin: 0;
+                image-rendering: optimizeSpeed;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: optimize-contrast;
+                image-rendering: pixelated;
+                -ms-interpolation-mode: nearest-neighbor;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="stage" width="950" height="650"></canvas>
+        <script src="libs/pixi.js"></script>
+        <script src="libs/pixi-animate.js"></script>
+        <script src="S_VriskaWake_PixelAnimate2.js"></script>
+        <script>
+            var scene = new PIXI.animate.Scene(950, 650, {
+                view: document.getElementById("stage"),
+                backgroundColor: 0xffffff,
+                antialias: true
+            });
+            scene.load(lib.S_VriskaWake3_PixiAnimate);
+        </script>
+    </body>
+</html>
