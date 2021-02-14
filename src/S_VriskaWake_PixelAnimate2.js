@@ -6211,6 +6211,133 @@
             .addTimedChild(instance1);
     });
 
+    lib.Vriska4_1 = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+
+        var instance1 = new Sprite(fromFrame("Vriska4_1_01"));
+        var instance2 = new Sprite(fromFrame("Vriska4_1_02"));
+        var instance3 = new Sprite(fromFrame("Vriska4_1_03"));
+        var instance4 = new Sprite(fromFrame("Vriska4_1_04"));
+        var instance5 = new Sprite(fromFrame("Vriska4_1_05"));
+        var instance6 = new Sprite(fromFrame("Vriska4_1_06"));
+
+        this.addTimedChild(instance1, 0, 1, {
+            "0": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance2, 1, 1, {
+            "1": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance3, 2, 1, {
+            "2": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance4, 3, 1, {
+            "3": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance5, 4, 1, {
+            "4": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance6, 5, 1, {
+            "5": {
+                x: 0,
+                y: 0,
+            },
+        });
+    });
+
+    lib.Vriska4_2 = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+
+        var instance1 = new Sprite(fromFrame("Vriska4_2_01"));
+        var instance2 = new Sprite(fromFrame("Vriska4_2_02"));
+        var instance3 = new Sprite(fromFrame("Vriska4_2_03"));
+        var instance4 = new Sprite(fromFrame("Vriska4_2_04"));
+        var instance5 = new Sprite(fromFrame("Vriska4_2_05"));
+        var instance6 = new Sprite(fromFrame("Vriska4_2_06"));
+
+        this.addTimedChild(instance1, 0, 1, {
+            "0": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance2, 1, 1, {
+            "1": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance3, 2, 1, {
+            "2": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance4, 3, 1, {
+            "3": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance5, 4, 1, {
+            "4": {
+                x: 0,
+                y: 0,
+            },
+        }).addTimedChild(instance6, 5, 1, {
+            "5": {
+                x: 0,
+                y: 0,
+            },
+        });
+    });
+
+    lib.Vriska4 = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 53 });
+
+        var instance1 = new lib.Vriska4_1();
+        var instance2 = new lib.Vriska4_2();
+
+        this.addTimedChild(instance1, 0, 53, {
+            "0": {
+                a: 1,
+            },
+            "11": {
+                a: 0,
+            },
+            "28": {
+                a: 1,
+            },
+            "38": {
+                a: 0,
+            },
+            "53": {
+                a: 1
+            },
+        }).addTimedChild(instance2, 0, 53, {
+            "0": {
+                a: 0,
+            },
+            "11": {
+                a: 1,
+            },
+            "28": {
+                a: 0,
+            },
+            "38": {
+                a: 1,
+            },
+            "53": {
+                a: 0
+            },
+        });
+    })
+
     var Graphic11 = MovieClip.extend(function (mode) {
         MovieClip.call(this, { mode: mode, duration: 166, loop: false });
         var instance1 = new Sprite(fromFrame("BG4_01"));
@@ -9371,6 +9498,11 @@
         var instance1 = new lib.Vol_3()
             .setTransform(153, 102, 0.902, 0.902);
         this[instance1.name = "VolumeButton"] = instance1;
+
+
+        var vriska4 = new lib.Vriska4();
+        
+
         this.addTimedChild(instance8, 45, 260, {
                 "45": {
                     x: 475.2,
@@ -30505,6 +30637,28 @@
                 "658": instance40,
                 "799": null
             })*/
+            /*.addTimedChild(vriska4_1, 514, 166, {
+                "514": {
+                    m: instance8.mask,
+                    x: 0,
+                    y: 0,
+                },
+            })
+            .addTimedChild(vriska4_2, 514, 166, {
+                "514": {
+                    m: instance8.mask,
+                    x: 0,
+                    y: 0,
+                    a: 0,
+                },
+            })*/
+            .addTimedChild(vriska4, 514, 166, {
+                "514": {
+                    m: instance8.mask,
+                    x: 0,
+                    y: 0,
+                },
+            })
             .addTimedChild(instance42, 658, 141, {
                 "658": {
                     m: instance8.mask,
