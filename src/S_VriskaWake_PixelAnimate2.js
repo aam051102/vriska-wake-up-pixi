@@ -48913,15 +48913,6 @@
     });
 
     lib.S_VriskaWake3_PixiAnimate.assets = {
-        // Individuals
-        /*"Colors": "images/Colors.gif",
-        "Glass": "images/Glass.gif",*/
-        /*"Bitmap 174": "images/Bitmap 174.png",
-        "Bitmap 175": "images/Bitmap 175.png",
-        "Bitmap 176": "images/Bitmap 176.png",
-        "Bitmap 177": "images/Bitmap 177.png",
-        "Bitmap 178": "images/Bitmap 178.png",*/
-
         // Sounds
         "DRAMA": "sounds/DRAMA.mp3",
         "sound 102": "sounds/sound 102.mp3",
@@ -48929,42 +48920,9 @@
 
         // Shapes
         "S_VriskaWake3_PixiAnimate": "images/S_VriskaWake3_PixiAnimate.shapes.json",
-
-        // Atlases
-        /*"S_VriskaWake3_PixiAnimate_atlas_1": "images/S_VriskaWake3_PixiAnimate_atlas_1.json",
-        "S_VriskaWake3_PixiAnimate_atlas_2": "images/S_VriskaWake3_PixiAnimate_atlas_2.json",
-        "S_VriskaWake3_PixiAnimate_atlas_3": "images/S_VriskaWake3_PixiAnimate_atlas_3.json",
-        "S_VriskaWake3_PixiAnimate_atlas_4": "images/S_VriskaWake3_PixiAnimate_atlas_4.json",
-        "S_VriskaWake3_PixiAnimate_atlas_5": "images/S_VriskaWake3_PixiAnimate_atlas_5.json",
-        "S_VriskaWake3_PixiAnimate_atlas_6": "images/S_VriskaWake3_PixiAnimate_atlas_6.json",
-        "S_VriskaWake3_PixiAnimate_atlas_7": "images/S_VriskaWake3_PixiAnimate_atlas_7.json",
-        "S_VriskaWake3_PixiAnimate_atlas_8": "images/S_VriskaWake3_PixiAnimate_atlas_8.json",
-        "S_VriskaWake3_PixiAnimate_atlas_9": "images/S_VriskaWake3_PixiAnimate_atlas_9.json",
-        "S_VriskaWake3_PixiAnimate_atlas_10": "images/S_VriskaWake3_PixiAnimate_atlas_10.json",
-        "S_VriskaWake3_PixiAnimate_atlas_11": "images/S_VriskaWake3_PixiAnimate_atlas_11.json",
-        "S_VriskaWake3_PixiAnimate_atlas_12": "images/S_VriskaWake3_PixiAnimate_atlas_12.json",
-        "S_VriskaWake3_PixiAnimate_atlas_13": "images/S_VriskaWake3_PixiAnimate_atlas_13.json",
-        "S_VriskaWake3_PixiAnimate_atlas_14": "images/S_VriskaWake3_PixiAnimate_atlas_14.json",
-        "S_VriskaWake3_PixiAnimate_atlas_15": "images/S_VriskaWake3_PixiAnimate_atlas_15.json",
-        "S_VriskaWake3_PixiAnimate_atlas_16": "images/S_VriskaWake3_PixiAnimate_atlas_16.json",
-        "S_VriskaWake3_PixiAnimate_atlas_17": "images/S_VriskaWake3_PixiAnimate_atlas_17.json",
-        "S_VriskaWake3_PixiAnimate_atlas_18": "images/S_VriskaWake3_PixiAnimate_atlas_18.json",
-        "S_VriskaWake3_PixiAnimate_atlas_19": "images/S_VriskaWake3_PixiAnimate_atlas_19.json",
-        "S_VriskaWake3_PixiAnimate_atlas_20": "images/S_VriskaWake3_PixiAnimate_atlas_20.json",
-        "S_VriskaWake3_PixiAnimate_atlas_21": "images/S_VriskaWake3_PixiAnimate_atlas_21.json",
-        "S_VriskaWake3_PixiAnimate_atlas_22": "images/S_VriskaWake3_PixiAnimate_atlas_22.json",
-        "S_VriskaWake3_PixiAnimate_atlas_23": "images/S_VriskaWake3_PixiAnimate_atlas_23.json",
-        "S_VriskaWake3_PixiAnimate_atlas_24": "images/S_VriskaWake3_PixiAnimate_atlas_24.json",
-        "S_VriskaWake3_PixiAnimate_atlas_25": "images/S_VriskaWake3_PixiAnimate_atlas_25.json",
-        "S_VriskaWake3_PixiAnimate_atlas_26": "images/S_VriskaWake3_PixiAnimate_atlas_26.json",
-        "S_VriskaWake3_PixiAnimate_atlas_27": "images/S_VriskaWake3_PixiAnimate_atlas_27.json",
-        "S_VriskaWake3_PixiAnimate_atlas_28": "images/S_VriskaWake3_PixiAnimate_atlas_28.json",
-        "S_VriskaWake3_PixiAnimate_atlas_29": "images/S_VriskaWake3_PixiAnimate_atlas_29.json",
-        "S_VriskaWake3_PixiAnimate_atlas_30": "images/S_VriskaWake3_PixiAnimate_atlas_30.json",
-        "S_VriskaWake3_PixiAnimate_atlas_31": "images/S_VriskaWake3_PixiAnimate_atlas_31.json",
-        "S_VriskaWake3_PixiAnimate_atlas_32": "images/S_VriskaWake3_PixiAnimate_atlas_32.json"*/
     };
 
+    // Atlases
     for(let i = 0; i <= 38; i++) {
         lib.S_VriskaWake3_PixiAnimate.assets[`atlas-${i}`] = `images/atlas-${i}.json`;
     }
