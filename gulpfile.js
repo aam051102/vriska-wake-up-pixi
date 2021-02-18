@@ -66,6 +66,7 @@ function js(next) {
                             exclude: {
                                 lib: true,
                                 PIXI: true,
+                                scene: true,
                             }
                         }
                     ],

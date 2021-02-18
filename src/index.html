@@ -28,6 +28,11 @@
 
             #logo {
                 height: 100%;
+                animation: logoMove 0.5s linear infinite alternate forwards;
+            }
+
+            #logo img {
+                height: 650px;
             }
 
             #preloader {
@@ -45,6 +50,15 @@
                 bottom: 3em;
                 width: 100%;
                 pointer-events: none;
+            }
+
+            @keyframes logoMove {
+                0% {
+                    transform: translateY(0px);
+                }
+                100% {
+                    transform: translateY(-15px);
+                }
             }
 
             #logo.transition {
@@ -77,12 +91,35 @@
                     visibility: hidden;
                 }
             }
+
+            #logo-mask {
+                height: 10%;
+                overflow: hidden;
+                width: 100%;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+            }
+
+            #logo-color {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 0;
+            }
         </style>
     </head>
     <body>
         <canvas id="stage" width="950" height="650"></canvas>
         <div id="preloader">
-            <img id="logo" src="./images/logo.gif" alt="logo" />
+            <div id="logo">
+                <img id="logo-base" src="./images/logo.png" alt="logo" />
+
+                <div id="logo-mask">
+                    <img id="logo-color" src="./images/logo2.png" alt="logo" />
+                </div>
+            </div>
+            
             <p>Setting up...</p>
         </div>
 

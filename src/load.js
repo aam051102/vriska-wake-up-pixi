@@ -1,10 +1,12 @@
 // Preloader
 const preloader_dom = document.querySelector("#preloader");
+const logoMask_dom = document.querySelector("#logo-mask");
 const logo_dom = preloader_dom.querySelector("#logo");
 const loaderText_dom = preloader_dom.querySelector("p");
 
 PIXI.Loader.shared.onProgress.add((e) => {
     loaderText_dom.textContent = Math.floor(e.progress) + "%";
+    logoMask_dom.style.height = loaderText_dom.textContent;
 });
 
 PIXI.Loader.shared.onComplete.add((e) => {
