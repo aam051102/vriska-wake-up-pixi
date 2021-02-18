@@ -9670,7 +9670,7 @@ class BWAudio {
         this.hitArea = new PIXI.Rectangle(-30, 0, 115.95, 59.65);
 
         this.on("pointertap", () => {
-            window.location.href = "https://mspfa.com/?s=16414&p=114";
+            window.top.location.href = "https://mspfa.com/?s=16414&p=114";
         });
     });
 
@@ -49041,12 +49041,12 @@ class BWAudio {
             }, 0)
             .addAction(function () {
                 this.stop();
-                instance2.text = "Click to play.";
+                /*instance2.text = "Click to play.";
                 this.interactive = true;
                 this.on("pointertap", () => {
                     this.interactive = false;
                     this.gotoAndPlay(1);
-                });
+                });*/
 
                 /* stop();
 
@@ -49081,7 +49081,7 @@ class BWAudio {
                     }
                     
                 }*/
-            }, 0)
+            }, 1)
             .addAction(function () {
                 /* var mySound:TheFurthestRing = new TheFurthestRing();
                 var music1:SoundChannel = new SoundChannel();

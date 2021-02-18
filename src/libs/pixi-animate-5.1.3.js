@@ -2508,7 +2508,7 @@ var load = function load(options, parent, complete, basePath, loader, metadata) 
         createInstance: true
     }, options || {});
 
-    loader = loader || new PIXI.Loader();
+    loader = loader || /*new PIXI.Loader()*/ PIXI.Loader.shared;
 
     function done() {
         var instance = options.createInstance && typeof options.stage === "function" ? new options.stage() : null;

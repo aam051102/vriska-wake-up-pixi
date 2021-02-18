@@ -10,21 +10,82 @@
         <style>
             body {
                 margin: 0;
-                image-rendering: optimizeSpeed;
+                font-family: "Courier New", sans-serif;
+                font-weight: bold;
+                font-size: 16px;
+                /*image-rendering: optimizeSpeed;
                 image-rendering: -moz-crisp-edges;
                 image-rendering: -webkit-optimize-contrast;
                 image-rendering: optimize-contrast;
                 image-rendering: pixelated;
-                -ms-interpolation-mode: nearest-neighbor;
+                -ms-interpolation-mode: nearest-neighbor;*/
+                user-select: none;
             }
 
             canvas {
                 vertical-align: bottom;
             }
+
+            #logo {
+                height: 100%;
+            }
+
+            #preloader {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 950px;
+                height: 650px;
+                background-color: #fff;
+                text-align: center;
+            }
+
+            #preloader p {
+                position: absolute;
+                bottom: 3em;
+                width: 100%;
+                pointer-events: none;
+            }
+
+            #logo.transition {
+                animation: logoOut 1s ease-in-out forwards;
+            }
+
+            @keyframes logoOut {
+                0% {
+                    transform: scale(1);
+                }
+                30% {
+                    transform: scale(1.05);
+                }
+                100% {
+                    transform: scale(0);
+                }
+            }
+
+            #preloader.transition {
+                animation: preloaderOut 1s ease-out forwards;
+            }
+
+            @keyframes preloaderOut {
+                0% {
+                    opacity: 1;
+                    visibility: visible;
+                }
+                100% {
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
         </style>
     </head>
     <body>
         <canvas id="stage" width="950" height="650"></canvas>
+        <div id="preloader">
+            <img id="logo" src="./images/logo.gif" alt="logo" />
+            <p>Setting up...</p>
+        </div>
+
         <!--<script src="libs/pixi.js"></script>
         <script src="libs/pixi-animate.js"></script>
         <script src="index.js"></script>-->
@@ -41,6 +102,29 @@
             });
 
             scene.load(lib.S_VriskaWake3_PixiAnimate);
+
+            
+            const preloader_dom = document.querySelector("#preloader");
+            const logo_dom = preloader_dom.querySelector("#logo");
+            const loaderText_dom = preloader_dom.querySelector("p");
+
+            PIXI.Loader.shared.onProgress.add((e) => {
+                loaderText_dom.textContent = Math.floor(e.progress) + "%";
+            });
+
+            PIXI.Loader.shared.onComplete.add((e) => {
+                loaderText_dom.textContent = "Click to play.";
+
+                preloader_dom.addEventListener("click", () => {
+                    preloader_dom.classList.add("transition");
+                    logo_dom.classList.add("transition");
+
+                    setTimeout(() => {
+                        preloader_dom.remove();
+                        scene.instance.play();
+                    }, 1200);
+                })
+            });
         </script>
     </body>
 </html>
