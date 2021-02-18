@@ -64,7 +64,8 @@ function js(next) {
                             topLevel: true,
                             eval: true,
                             exclude: {
-                                lib: true
+                                lib: true,
+                                PIXI: true,
                             }
                         }
                     ],
