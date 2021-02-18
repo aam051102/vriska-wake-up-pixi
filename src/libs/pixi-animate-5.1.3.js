@@ -455,7 +455,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Container = PIXI.Container;
-var SharedTicker = PIXI.ticker.shared;
+var SharedTicker = PIXI.Ticker.shared;
 
 /**
  * Provide timeline playback of movieclip
@@ -805,6 +805,47 @@ var MovieClip = function (_Container) {
         this._timelines.push(timeline);
         return timeline;
     };
+    
+    /**
+     * Extended: Add effect or effects
+     * @method PIXI.animate.MovieClip#addTimedEffect
+     * @param {PIXI.DisplayObject} instance  Instance to effect
+     * @param {Number} startFrame
+     * @param {Number} duration
+     * @param {Object} keyframes The map of frames to effect objects
+     * @return {PIXI.animate.MovieClip} instance of clip for chaining 
+     */
+    MovieClip.prototype.addTimedEffect = function addTimedEffect(instance, startFrame, duration, keyframes) {
+        const frames = {};
+
+        let start = 0;
+
+        for (var i in keyframes) {
+            frames[i] = {e: keyframes[i]};
+
+            let end = parseInt(i, 10);
+
+            if(start != 0) {
+                let diff = end - start;
+                let base = (keyframes[i].blur - keyframes[start].blur) / diff;
+
+                for(let j = 1; j < diff; j++) {
+                    frames[start + j] = {
+                        e: {
+                            blur: keyframes[start].blur + (base * j)
+                        }
+                    };
+
+                }
+            }
+
+            start = end;
+        }
+
+        this.addTimedChild(instance, startFrame, duration, frames);
+
+        return this;
+    }
 
     /**
      * Add mask or masks
@@ -1272,7 +1313,9 @@ var MovieClip = function (_Container) {
                     // set the position within that tween
                     //and break the loop to move onto the next timeline
                     tween.setPosition(currentFrame);
-                    break;
+
+                    // TODO: Do NOT remove this, but instead have the tween update in p.addKeyframe
+                    //break;
                 }
             }
         }
@@ -1613,7 +1656,14 @@ var Scene = function (_PIXI$Application) {
    * @type {PIXI.animate.sound}
    * @readOnly
    */
-		var _this = _possibleConstructorReturn(this, _PIXI$Application.call(this, width, height, renderOptions, noWebGL));
+
+       var _this = _possibleConstructorReturn(this, _PIXI$Application.call(this, {
+            width: width,
+            height: height,
+            view: renderOptions.view,
+            backgroundColor: renderOptions.backgroundColor,
+            antialias: renderOptions.antialias,
+        }));
 
 		_this.sound = _sound2.default;
 
@@ -1698,7 +1748,6 @@ var ShapesCache = {};
 Object.defineProperty(ShapesCache, 'add', {
     enumerable: false,
     value: function value(prop, items) {
-
         // Decode string to map of files
         if (typeof items === "string") {
             items = _utils2.default.deserializeShapes(items);
@@ -1789,8 +1838,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @class SymbolLoader
  * @private
  */
-var SymbolLoader = function SymbolLoader() {
-    return function (resource, next) {
+var SymbolLoader = {
+    use: function(resource, next) {
         var url = resource.url;
         var data = resource.data;
 
@@ -1805,11 +1854,11 @@ var SymbolLoader = function SymbolLoader() {
             PIXI.Texture.addToCache(resource.texture, resource.name);
         }
         next();
-    };
+    }
 };
 
 // Assign to the loader
-PIXI.loaders.Loader.addPixiMiddleware(SymbolLoader);
+PIXI.Loader.registerPlugin(SymbolLoader);
 
 exports.default = SymbolLoader;
 
@@ -2143,7 +2192,8 @@ var props = {
     v: null, //visible
     c: null, //colorTransform
     m: null, //mask
-    g: null //not sure if we'll actually handle graphics this way?
+    g: null, //not sure if we'll actually handle graphics this way?
+    e: {} //effects
 };
 
 //split r, g, b into separate values for tweening
@@ -2251,6 +2301,16 @@ function setPropFromShorthand(target, prop, value) {
             break;
         case "m":
             target.ma(value); // ma = setMask
+            break;
+        case "e":
+            if(value.blur) {
+                if(!target.inner.filters) {
+                    target.inner.filters = [ new PIXI.filters.BlurFilter(0) ];
+                }
+                
+                target.inner.filters[0].blur = value.blur;
+            }
+
             break;
     }
 }
@@ -2448,7 +2508,7 @@ var load = function load(options, parent, complete, basePath, loader, metadata) 
         createInstance: true
     }, options || {});
 
-    loader = loader || new PIXI.loaders.Loader();
+    loader = loader || new PIXI.Loader();
 
     function done() {
         var instance = options.createInstance && typeof options.stage === "function" ? new options.stage() : null;

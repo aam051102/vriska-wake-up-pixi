@@ -290,6 +290,7 @@ class BWAudio {
 
     lib.BoxBlack = Container.extend(function () {
         Container.call(this);
+        console.log(shapes.S_VriskaWake3_PixiAnimate);
         var instance1 = new Graphics()
             .drawCommands(shapes.S_VriskaWake3_PixiAnimate[0])
             .setTransform(-324.95, -224.95, 5.605, 7.543);
@@ -6274,6 +6275,21 @@ class BWAudio {
         this.addChild(instance1);
     });
 
+    lib.BG3_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, {
+            duration: 6
+        });
+
+        this.inner = new lib.BG3();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    });
+
     lib.BG3 = MovieClip.extend(function () {
         MovieClip.call(this, {
             duration: 6
@@ -9715,7 +9731,7 @@ class BWAudio {
         var instance27 = new lib.Vriska2();
         var instance26 = new lib.Cracks2();
         var instance33 = new lib.CrackBack_2();
-        var instance32 = new lib.BG3();
+        var instance32 = new lib.BG3_wrap();
         var instance36 = new Graphic9(MovieClip.SYNCHED);
         var instance31 = new lib.Vriska3();
         var instance39 = new Graphic11(MovieClip.SYNCHED);
@@ -9735,9 +9751,8 @@ class BWAudio {
             .setStyle({
                 fontFamily: "Courier New",
                 fontSize: 16,
+                fontWeight: "bold",
                 leading: 2,
-                wordWrap: true,
-                wordWrapWidth: 104
             })
             .setAlign("center");
         this[instance2.name = "loadtext"] = instance2;
@@ -29499,6 +29514,14 @@ class BWAudio {
                 "369": instance30,
                 "514": null
             })*/
+            .addTimedEffect(instance32, 369, 97, {
+                "369": {
+                    blur: 9
+                },
+                "466": {
+                    blur: 0
+                }
+            })
             .addTimedChild(instance32, 369, 141, {
                 "369": {
                     m: instance8.mask,
@@ -49014,6 +49037,14 @@ class BWAudio {
                 */
             }, 0)
             .addAction(function () {
+                this.stop();
+                instance2.text = "Click to play.";
+                this.interactive = true;
+                this.on("click", () => {
+                    this.interactive = false;
+                    this.gotoAndPlay(1);
+                });
+
                 /* stop();
 
                 this.addEventListener(Event.ENTER_FRAME, loading);
