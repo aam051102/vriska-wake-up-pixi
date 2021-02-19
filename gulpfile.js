@@ -53,7 +53,7 @@ function imagesBuild(next) {
     next();
 }
 
-function js(next) {
+function jsBuild(next) {
     gulp.src("./src/**/*.js")
         .pipe(
             babel({
@@ -87,6 +87,20 @@ function js(next) {
     next();
 }
 
+function js(next) {
+    gulp.src("./src/**/*.js")
+        .pipe(
+            babel({
+                presets: ["@babel/preset-env"],
+                plugins: [],
+            }).on("error", (err) => console.log(err))
+        )
+        .pipe(gulp.dest("./dist/"))
+        .pipe(connect.reload());
+
+    next();
+}
+
 function audio(next) {
     gulp.src("./src/sounds/**/*.*")
         .pipe(gulp.dest("./dist/sounds"))
@@ -100,10 +114,6 @@ function watchHtml() {
     gulp.watch("./src/*.html", { ignoreInitial: false }, html);
 }
 
-function watchImages() {
-    gulp.watch("./src/images/**/*.*", { ignoreInitial: false }, images);
-}
-
 function watchJs() {
     gulp.watch("./src/**/*.js", { ignoreInitial: false }, js);
 }
@@ -114,7 +124,6 @@ function watchAudio() {
 
 gulp.task("dev", function (next) {
     watchHtml();
-    //watchImages();
     watchJs();
     watchAudio();
     connect.server({
@@ -126,7 +135,7 @@ gulp.task("dev", function (next) {
 });
 
 gulp.task("build", function (next) {
-    js(next);
+    jsBuild(next);
     imagesBuild(next);
     audio(next);
     html(next);
