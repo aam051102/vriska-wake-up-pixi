@@ -1314,8 +1314,7 @@ var MovieClip = function (_Container) {
                     //and break the loop to move onto the next timeline
                     tween.setPosition(currentFrame);
 
-                    // TODO: Do NOT remove this, but instead have the tween update in p.addKeyframe
-                    //break;
+                    break;
                 }
             }
         }
@@ -1847,11 +1846,16 @@ var SymbolLoader = {
             next();
         } else if (url.search(/\.shapes\.(json|txt)$/i) > -1) {
             _ShapesCache2.default.add(resource.name, data);
-        } else if (data.nodeName && data.nodeName === 'IMG') {
-            // Add individual images to the texture cache by their
-            // short symbol name, not the URL
-            //PIXI.Texture.addTextureToCache(resource.texture, resource.name);
-            PIXI.Texture.addToCache(resource.texture, resource.name);
+        } else if (data.nodeName) {
+            if(data.nodeName === 'IMG') {
+                // Add individual images to the texture cache by their
+                // short symbol name, not the URL
+                //PIXI.Texture.addTextureToCache(resource.texture, resource.name);
+                PIXI.Texture.addToCache(resource.texture, resource.name);
+            } else if(data.nodeName === "AUDIO") {
+                // Add individual sounds to the cache by their short symbol name, not the URL
+                // TODO: Implement audio preload system
+            }
         }
         next();
     }
@@ -1953,6 +1957,7 @@ p.addKeyframe = function (properties, startFrame) {
     //create the new Tween and add it to the list
     var tween = new _Tween2.default(this.target, startProps, null, startFrame, 0);
     this.push(tween);
+
     Object.assign(this._currentProps, tween.endProps);
 };
 

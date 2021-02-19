@@ -1,5 +1,13 @@
+/**
+ * The BWAudio class represents a
+ * @class BWAudio
+ * @param {String} url The source URL
+ * @param {Number} volume The volume to play at
+ * @param {Boolean} looping Whether or not the audio should loop
+ * @constructor
+ */
 class BWAudio {
-    constructor(url, volume, looping, next) {
+    constructor(url, volume, looping) {
         this.url = url;
         this.volume = volume || 1;
         this.looping = looping || false;
@@ -7,8 +15,6 @@ class BWAudio {
         this.isPaused = false;
         this.isWebAudio;
         this.source;
-        this.next = next ? new BWAudio(next, volume, true) : undefined;
-        this.isPlayingNext = false;
 
         this.onerror = (e) => {
             console.error(e);
@@ -16,12 +22,7 @@ class BWAudio {
 
         this.oncanplay = () => {};
 
-        this.onended = () => {
-            if (this.next && !this.isPlayingNext && this.isPlaying) {
-                this.next.start();
-                this.isPlayingNext = true;
-            }
-        };
+        this.onended = () => {};
 
         if (window.AudioContext || window.webkitAudioContext) {
             this.initWebAudio();
@@ -32,6 +33,11 @@ class BWAudio {
         }
     }
 
+    /**
+     * Initiates fallback audio if Webkit Audio not available
+     * @method BWAudio#initFallbackAudio
+     * @private
+     */
     initFallbackAudio() {
         this.source = new Audio(this.url);
         this.source.volume = this.volume;
@@ -40,6 +46,11 @@ class BWAudio {
         this.source.onended = this.onended;
     }
 
+    /**
+     * Initiates Webkit Audio
+     * @method BWAudio#initWebAudio
+     * @private
+     */
     initWebAudio() {
         this.aCtx;
         if (window.webkitAudioContext) {
@@ -100,18 +111,25 @@ class BWAudio {
         }
     }
 
+    /**
+     * Sets the volume of the audio
+     * @method BWAudio#setVolume
+     * @param {Number} volume The target volume
+     * @public
+     */
     setVolume(volume) {
         if (this.isWebAudio) {
             this.gainNode.gain.value = this.volume = volume;
         } else {
             this.source.volume = this.volume = volume;
         }
-
-        if (this.next) {
-            this.next.setVolume(this.volume);
-        }
     }
 
+    /**
+     * Starts the audio from the beginning
+     * @method BWAudio#start
+     * @public
+     */
     start() {
         if (!this.isPlaying) {
             if (this.isWebAudio) {
@@ -129,6 +147,11 @@ class BWAudio {
         }
     }
 
+    /**
+     * Stops the audio completely
+     * @method BWAudio#stop
+     * @public
+     */
     stop() {
         if (this.isPlaying) {
             this.isPlaying = false;
@@ -143,14 +166,14 @@ class BWAudio {
             } else {
                 this.source.pause();
             }
-
-            if (this.isPlayingNext) {
-                this.next.stop();
-                this.isPlayingNext = false;
-            }
         }
     }
 
+    /**
+     * Pauses the audio
+     * @method BWAudio#pause
+     * @public
+     */
     pause() {
         if (this.isPlaying && !this.isPaused) {
             if (this.isWebAudio) {
@@ -164,6 +187,11 @@ class BWAudio {
         }
     }
 
+    /**
+     * Resumes playing of paused audio
+     * @method BWAudio#resume
+     * @public
+     */
     resume() {
         if (this.isPlaying && this.isPaused) {
             if (this.isWebAudio) {
@@ -178,6 +206,43 @@ class BWAudio {
     }
 }
 
+function addTimedEffect(timeline, keyframes) {
+    const frames = {};
+
+    let start = 0;
+
+    for (var i in keyframes) {
+        frames[i] = {e: keyframes[i]};
+
+        let end = parseInt(i, 10);
+
+        if(start != 0) {
+            let diff = end - start;
+            let base = (keyframes[i].blur - keyframes[start].blur) / diff;
+
+            for(let j = 1; j < diff; j++) {
+                frames[start + j] = {
+                    e: {
+                        blur: keyframes[start].blur + (base * j)
+                    }
+                };
+
+            }
+        }
+
+        start = end;
+    }
+
+    for(var i in frames) {
+        if(timeline[i]) {
+            timeline[i].e = frames[i].e;
+        } else {
+            timeline[i] = frames[i];
+        }
+    }
+
+    return timeline;
+}
 
 
 (function (PIXI, lib) {
@@ -6334,6 +6399,19 @@ class BWAudio {
             .addTimedChild(instance6, 5, 1);
     });
 
+    lib.CrackBack_2_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+        
+        this.inner = new lib.CrackBack_2();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    })
+
     lib.CrackBack_2 = MovieClip.extend(function () {
         MovieClip.call(this, {
             duration: 6
@@ -8811,6 +8889,19 @@ class BWAudio {
             .addTimedChild(instance1);
     });
 
+    lib.Coin_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+        
+        this.inner = new lib.Coin();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    })
+
     lib.Coin = MovieClip.extend(function () {
         MovieClip.call(this, {
             duration: 6
@@ -8854,6 +8945,19 @@ class BWAudio {
             })
             .addTimedChild(instance6, 5, 1);
     });
+
+    lib.Vriska6_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+        
+        this.inner = new lib.Vriska6();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    })
 
     lib.Vriska6 = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -8899,6 +9003,19 @@ class BWAudio {
             .addTimedChild(instance6, 5, 1);
     });
 
+    lib.BG6_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+        
+        this.inner = new lib.BG6();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    })
+
     lib.BG6 = MovieClip.extend(function () {
         MovieClip.call(this, {
             duration: 6
@@ -8942,6 +9059,19 @@ class BWAudio {
             })
             .addTimedChild(instance6, 5, 1);
     });
+
+    lib.Pocket_wrap = MovieClip.extend(function() {
+        MovieClip.call(this, { duration: 6 });
+        
+        this.inner = new lib.Pocket();
+        
+        this.addTimedChild(this.inner, 0, 6, {
+            "0": {
+                x: 0,
+                y: 0,
+            }
+        });
+    })
 
     lib.Pocket = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -9733,7 +9863,7 @@ class BWAudio {
         var instance28 = new lib.BG2();
         var instance27 = new lib.Vriska2();
         var instance26 = new lib.Cracks2();
-        var instance33 = new lib.CrackBack_2();
+        var instance33 = new lib.CrackBack_2_wrap();
         var instance32 = new lib.BG3_wrap();
         var instance36 = new Graphic9(MovieClip.SYNCHED);
         var instance31 = new lib.Vriska3();
@@ -9742,10 +9872,10 @@ class BWAudio {
         var instance43 = new lib.Climb();
         var instance42 = new Graphic13(MovieClip.SYNCHED);
         var instance41 = new Graphic12(MovieClip.SYNCHED);
-        var instance50 = new lib.Pocket();
-        var instance49 = new lib.BG6();
-        var instance48 = new lib.Vriska6();
-        var instance47 = new lib.Coin();
+        var instance50 = new lib.Pocket_wrap();
+        var instance49 = new lib.BG6_wrap();
+        var instance48 = new lib.Vriska6_wrap();
+        var instance47 = new lib.Coin_wrap();
         var instance56 = new lib.BG4();
         var instance55 = new lib.BG7();
         var instance54 = new lib.Vriska7();
@@ -29076,7 +29206,15 @@ class BWAudio {
                 "388": instance30,
                 "514": null
             })*/
-            .addTimedChild(instance33, 388, 126, {
+            /*.addTimedEffect(instance33, 388, 98, {
+                "388": {
+                    blur: 18
+                },
+                "486": {
+                    blur: 0
+                }
+            })*/
+            .addTimedChild(instance33, 388, 126, addTimedEffect({
                 "388": {
                     m: instance8.mask,
                     x: 514,
@@ -29512,20 +29650,27 @@ class BWAudio {
                     y: 291.05,
                     a: 1
                 }
-            })
+            }, {
+                "388": {
+                    blur: 18
+                },
+                "486": {
+                    blur: 0
+                }
+            }))
             /*.addTimedMask(instance32, {
                 "369": instance30,
                 "514": null
             })*/
-            .addTimedEffect(instance32, 369, 97, {
+            /*.addTimedEffect(instance32, 369, 97, {
                 "369": {
                     blur: 9
                 },
                 "466": {
                     blur: 0
                 }
-            })
-            .addTimedChild(instance32, 369, 141, {
+            })*/
+            .addTimedChild(instance32, 369, 141, addTimedEffect({
                 "369": {
                     m: instance8.mask,
                     x: 514.05,
@@ -29898,7 +30043,14 @@ class BWAudio {
                 "464": {
                     x: 471.05
                 }
-            })
+            }, {
+                "369": {
+                    blur: 9
+                },
+                "466": {
+                    blur: 0
+                }
+            }))
             .addTimedChild(instance36, 510, 4, {
                 "510": {
                     m: instance8.mask,
@@ -31627,7 +31779,15 @@ class BWAudio {
                 "765": instance46,
                 "969": null
             })*/
-            .addTimedChild(instance50, 765, 191, {
+            /*.addTimedEffect(instance50, 862, 951 - 862, {
+                "862": {
+                    blur: 0
+                },
+                "951": {
+                    blur: 5
+                }
+            })*/
+            .addTimedChild(instance50, 765, 191, addTimedEffect({
                 "765": {
                     m: instance8.mask,
                     x: 327.65,
@@ -32544,8 +32704,23 @@ class BWAudio {
                     x: 301.4,
                     y: -13.8
                 }
-            })
-            .addTimedChild(instance49, 765, 191, {
+            }, {
+                "862": {
+                    blur: 0
+                },
+                "951": {
+                    blur: 5
+                }
+            }))
+            /*.addTimedEffect(instance49, 766, 862 - 766, {
+                "766": {
+                    blur: 5
+                },
+                "862": {
+                    blur: 0
+                }
+            })*/
+            .addTimedChild(instance49, 765, 191, addTimedEffect({
                 "765": {
                     m: instance8.mask,
                     x: 475,
@@ -33548,8 +33723,23 @@ class BWAudio {
                     x: 475,
                     y: 325
                 }
-            })
-            .addTimedChild(instance48, 765, 191, {
+            }, {
+                "766": {
+                    blur: 5
+                },
+                "862": {
+                    blur: 0
+                }
+            }))
+            /*.addTimedEffect(instance48, 766, 862 - 766, {
+                "766": {
+                    blur: 5
+                },
+                "862": {
+                    blur: 0
+                }
+            })*/
+            .addTimedChild(instance48, 765, 191, addTimedEffect({
                 "765": {
                     m: instance8.mask,
                     x: 475,
@@ -34552,8 +34742,23 @@ class BWAudio {
                     x: 475,
                     y: 325
                 }
-            })
-            .addTimedChild(instance47, 765, 191, {
+            }, {
+                "766": {
+                    blur: 5
+                },
+                "862": {
+                    blur: 0
+                }
+            }))
+            /*.addTimedEffect(instance47, 862, 951 - 862, {
+                "862": {
+                    blur: 0
+                },
+                "951": {
+                    blur: 5
+                }
+            })*/
+            .addTimedChild(instance47, 765, 191, addTimedEffect({
                 "765": {
                     m: instance8.mask,
                     x: 475,
@@ -35556,7 +35761,14 @@ class BWAudio {
                     x: 475,
                     y: 325
                 }
-            })
+            }, {
+                "862": {
+                    blur: 0
+                },
+                "951": {
+                    blur: 5
+                }
+            }))
             /*.addTimedMask(instance56, {
                 "954": instance3,
                 "1112": null
