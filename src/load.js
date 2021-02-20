@@ -24,7 +24,9 @@ PIXI.Loader.shared.onComplete.add((e) => {
 });
 
 // Load scene
-var scene = new PIXI.animate.Scene(950, 650, {
+var scene = new PIXI.animate.Scene({
+    width: 950,
+    height: 650,
     view: document.getElementById("stage"),
     backgroundColor: 0xffffff,
     antialias: true

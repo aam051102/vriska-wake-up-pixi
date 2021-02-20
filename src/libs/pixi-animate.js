@@ -1,6 +1,6 @@
 /*!
- * pixi-animate - v1.3.6
- * Compiled Wed, 12 Jun 2019 14:56:56 UTC
+ * pixi-animate - v1.3.5
+ * Compiled Sat, 20 Feb 2021 15:05:32 UTC
  *
  * pixi-animate is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -805,47 +805,6 @@ var MovieClip = function (_Container) {
         this._timelines.push(timeline);
         return timeline;
     };
-    
-    /**
-     * Extended: Add effect or effects
-     * @method PIXI.animate.MovieClip#addTimedEffect
-     * @param {PIXI.DisplayObject} instance  Instance to effect
-     * @param {Number} startFrame
-     * @param {Number} duration
-     * @param {Object} keyframes The map of frames to effect objects
-     * @return {PIXI.animate.MovieClip} instance of clip for chaining 
-     */
-    MovieClip.prototype.addTimedEffect = function addTimedEffect(instance, startFrame, duration, keyframes) {
-        const frames = {};
-
-        let start = 0;
-
-        for (var i in keyframes) {
-            frames[i] = {e: keyframes[i]};
-
-            let end = parseInt(i, 10);
-
-            if(start != 0) {
-                let diff = end - start;
-                let base = (keyframes[i].blur - keyframes[start].blur) / diff;
-
-                for(let j = 1; j < diff; j++) {
-                    frames[start + j] = {
-                        e: {
-                            blur: keyframes[start].blur + (base * j)
-                        }
-                    };
-
-                }
-            }
-
-            start = end;
-        }
-
-        this.addTimedChild(instance, startFrame, duration, frames);
-
-        return this;
-    }
 
     /**
      * Add mask or masks
@@ -880,6 +839,74 @@ var MovieClip = function (_Container) {
     MovieClip.prototype.am = function am(instance, keyframes) {
         return this.addTimedMask(instance, keyframes);
     };
+
+    /**
+     * Add effect or effects
+     * @method PIXI.animate.MovieClip#addTimedEffect
+     * @param {PIXI.DisplayObject} instance Instance to effect
+     * @param {Object} keyframes The map of frames to effect objects
+     * @return {PIXI.animate.MovieClip} instance of clip for chaining
+     */
+    /*addTimedEffect(instance, keyframes) {
+        for (let i in keyframes) {
+            this.addKeyframe(instance, {
+                e: keyframes[i]
+            }, parseInt(i, 10));
+        }
+          // Set the initial position/add
+        this._setTimelinePosition(this.currentFrame, this.currentFrame, true);
+        return this;
+    }*/
+
+    /**
+     * Shortcut alias for `addTimedEffect`
+     * @method PIXI.animate.MovieClip#ae
+     * @param {PIXI.DisplayObject} instance Instance to effect
+     * @param {Object} keyframes The map of frames to effect objects
+     * @return {PIXI.animate.MovieClip} instance of clip for chaining
+     */
+    /*ae(instance, keyframes) {
+        return this.addTimedEffect(instance, keyframes);
+    }*/
+
+    /**
+     * Add tweened effect or effects
+     * @method PIXI.animate.MovieClip#addTweenedEffect
+     * @param {PIXI.DisplayObject} instance  Instance to effect
+     * @param {Object} keyframes The map of frames to effect objects
+     * @return {PIXI.animate.MovieClip} instance of clip for chaining 
+     */
+    /*addTweenedEffect(instance, keyframes) {
+        const frames = {};
+        let start = 0;
+          for (let i in keyframes) {
+            frames[i] = { e: keyframes[i] };
+              let end = parseInt(i, 10);
+              if(start != 0) {
+                // TODO: Generalize for all effects instead of having to manually specify everything
+                let diff = end - start;
+                let base = (keyframes[i].blur - keyframes[start].blur) / diff;
+                  for(let j = 1, p = start + 1; j < diff; j++, p++) {
+                    if(!frames[p]) frames[p] = { e: {} }
+                      frames[p].e.blur = keyframes[start].blur + (base * j)
+                }
+            }
+              start = end;
+        }
+          this.addTimedEffect(instance, frames);
+          return this;
+    }*/
+
+    /**
+     * Shortcut alias for `addTweenedEffect`
+     * @method PIXI.animate.MovieClip#ate
+     * @param {PIXI.DisplayObject} instance  Instance to effect
+     * @param {Object} keyframes The map of frames to effect objects
+     * @return {PIXI.animate.MovieClip} instance of clip for chaining
+     */
+    /*ate(instance, keyframes) {
+        return this.addTweenedEffect(instance, keyframes);
+    }*/
 
     /**
      * Add a tween to the clip
@@ -1313,7 +1340,6 @@ var MovieClip = function (_Container) {
                     // set the position within that tween
                     //and break the loop to move onto the next timeline
                     tween.setPosition(currentFrame);
-
                     break;
                 }
             }
@@ -1646,7 +1672,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Scene = function (_PIXI$Application) {
 	_inherits(Scene, _PIXI$Application);
 
-	function Scene(width, height, renderOptions, noWebGL) {
+	function Scene(options) {
 		_classCallCheck(this, Scene);
 
 		/**
@@ -1655,14 +1681,7 @@ var Scene = function (_PIXI$Application) {
    * @type {PIXI.animate.sound}
    * @readOnly
    */
-
-       var _this = _possibleConstructorReturn(this, _PIXI$Application.call(this, {
-            width: width,
-            height: height,
-            view: renderOptions.view,
-            backgroundColor: renderOptions.backgroundColor,
-            antialias: renderOptions.antialias,
-        }));
+		var _this = _possibleConstructorReturn(this, _PIXI$Application.call(this, options));
 
 		_this.sound = _sound2.default;
 
@@ -1747,6 +1766,7 @@ var ShapesCache = {};
 Object.defineProperty(ShapesCache, 'add', {
     enumerable: false,
     value: function value(prop, items) {
+
         // Decode string to map of files
         if (typeof items === "string") {
             items = _utils2.default.deserializeShapes(items);
@@ -1838,7 +1858,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @private
  */
 var SymbolLoader = {
-    use: function(resource, next) {
+    use: function use(resource, next) {
         var url = resource.url;
         var data = resource.data;
 
@@ -1846,16 +1866,10 @@ var SymbolLoader = {
             next();
         } else if (url.search(/\.shapes\.(json|txt)$/i) > -1) {
             _ShapesCache2.default.add(resource.name, data);
-        } else if (data.nodeName) {
-            if(data.nodeName === 'IMG') {
-                // Add individual images to the texture cache by their
-                // short symbol name, not the URL
-                //PIXI.Texture.addTextureToCache(resource.texture, resource.name);
-                PIXI.Texture.addToCache(resource.texture, resource.name);
-            } else if(data.nodeName === "AUDIO") {
-                // Add individual sounds to the cache by their short symbol name, not the URL
-                // TODO: Implement audio preload system
-            }
+        } else if (data.nodeName && data.nodeName === 'IMG') {
+            // Add individual images to the texture cache by their
+            // short symbol name, not the URL
+            PIXI.Texture.addToCache(resource.texture, resource.name);
         }
         next();
     }
@@ -1957,7 +1971,6 @@ p.addKeyframe = function (properties, startFrame) {
     //create the new Tween and add it to the list
     var tween = new _Tween2.default(this.target, startProps, null, startFrame, 0);
     this.push(tween);
-
     Object.assign(this._currentProps, tween.endProps);
 };
 
@@ -2024,6 +2037,8 @@ exports.default = Timeline;
 exports.__esModule = true;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+//import filterTypes from "./filterTypes";
 
 /**
  * Provide timeline playback of movieclip
@@ -2107,11 +2122,25 @@ var Tween = function () {
             }
         }
 
-        //copy in any starting properties don't change
         for (prop in startProps) {
+            //copy in any starting properties don't change
             if (!this.endProps.hasOwnProperty(prop)) {
                 this.endProps[prop] = startProps[prop];
             }
+
+            // Add filters to target if they do not already exist
+            /*if(prop === "e") {
+                Object.keys(startProps[prop]).forEach((filter) => {
+                    const type = filterTypes[filter];
+                      if(type) {
+                        target.addFilter(new type(), filter);
+                    } else {
+                        if (typeof console !== "undefined" && console.warn) {
+                            console.warn("Warning: Could not add non-existent filter. Did you remember to add it to filterTypes?");
+                        }
+                    }
+                });
+            }*/
         }
     }
 
@@ -2308,14 +2337,10 @@ function setPropFromShorthand(target, prop, value) {
             target.ma(value); // ma = setMask
             break;
         case "e":
-            if(value.blur) {
-                if(!target.inner.filters) {
-                    target.inner.filters = [ new PIXI.filters.BlurFilter(0) ];
-                }
-                
-                target.inner.filters[0].blur = value.blur;
-            }
-
+            // TODO: Test.
+            /*Object.keys(value).forEach((type) => {
+                target.effects[type] = value[type];
+            });*/
             break;
     }
 }
@@ -2375,11 +2400,13 @@ var _AnimatorTimeline2 = _interopRequireDefault(_AnimatorTimeline);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var VERSION = '1.3.6';
+var VERSION = '1.3.5';
 
 /**
  * @namespace PIXI.animate
  */
+
+//import filterTypes from './filterTypes';
 exports.Animator = _Animator2.default;
 exports.AnimatorTimeline = _AnimatorTimeline2.default;
 exports.load = _load2.default;
@@ -2513,7 +2540,7 @@ var load = function load(options, parent, complete, basePath, loader, metadata) 
         createInstance: true
     }, options || {});
 
-    loader = loader || /*new PIXI.Loader()*/ PIXI.Loader.shared;
+    loader = loader || PIXI.Loader.shared;
 
     function done() {
         var instance = options.createInstance && typeof options.stage === "function" ? new options.stage() : null;
@@ -2575,6 +2602,7 @@ exports.__esModule = true;
  *    // where 'alias' is the ID in stage assets
  * });
  */
+// TODO: Implement modern sound system
 exports.default = new PIXI.utils.EventEmitter();
 
 },{}],12:[function(require,module,exports){
@@ -2883,6 +2911,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @class DisplayObject
  */
 var p = PIXI.DisplayObject.prototype;
+
+/**
+ * Key/value container for filters.
+ */
+p.effects = {};
+
+/**
+ * Adds a filter to a known position.
+ * @method PIXI.DisplayObject#addFilter
+ * @param  {PIXI.Filter} filter Filter to add
+ * @param  {String} name Name of filter to add
+ * @return {PIXI.DisplayObject}
+ */
+/**
+ * Shortcut to `addFilter`.
+ * @method PIXI.DisplayObject#af
+ * @param  {PIXI.Filter} filter Filter to add
+ * @param  {String} name Name of filter to add
+ * @return {PIXI.DisplayObject}
+ */
+/*p.addFilter = p.af = function(filter, name) {
+    if(!this.filters) this.filters = [];
+    this.effects[name] = filter;
+    this.filters.push(this.effects[name]);
+    return this;
+};*/
 
 // Color Matrix filter
 var ColorMatrixFilter = void 0;
