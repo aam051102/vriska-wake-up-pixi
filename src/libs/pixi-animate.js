@@ -1,6 +1,6 @@
 /*!
  * pixi-animate - v1.3.5
- * Compiled Sat, 20 Feb 2021 15:05:32 UTC
+ * Compiled Sun, 21 Feb 2021 21:41:09 UTC
  *
  * pixi-animate is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -847,16 +847,19 @@ var MovieClip = function (_Container) {
      * @param {Object} keyframes The map of frames to effect objects
      * @return {PIXI.animate.MovieClip} instance of clip for chaining
      */
-    /*addTimedEffect(instance, keyframes) {
-        for (let i in keyframes) {
+
+
+    MovieClip.prototype.addTimedEffect = function addTimedEffect(instance, keyframes) {
+        for (var i in keyframes) {
             this.addKeyframe(instance, {
                 e: keyframes[i]
             }, parseInt(i, 10));
         }
-          // Set the initial position/add
+
+        // Set the initial position/add
         this._setTimelinePosition(this.currentFrame, this.currentFrame, true);
         return this;
-    }*/
+    };
 
     /**
      * Shortcut alias for `addTimedEffect`
@@ -865,9 +868,11 @@ var MovieClip = function (_Container) {
      * @param {Object} keyframes The map of frames to effect objects
      * @return {PIXI.animate.MovieClip} instance of clip for chaining
      */
-    /*ae(instance, keyframes) {
+
+
+    MovieClip.prototype.ae = function ae(instance, keyframes) {
         return this.addTimedEffect(instance, keyframes);
-    }*/
+    };
 
     /**
      * Add tweened effect or effects
@@ -876,26 +881,36 @@ var MovieClip = function (_Container) {
      * @param {Object} keyframes The map of frames to effect objects
      * @return {PIXI.animate.MovieClip} instance of clip for chaining 
      */
-    /*addTweenedEffect(instance, keyframes) {
-        const frames = {};
-        let start = 0;
-          for (let i in keyframes) {
+
+
+    MovieClip.prototype.addTweenedEffect = function addTweenedEffect(instance, keyframes) {
+        var frames = {};
+        var start = 0;
+
+        for (var i in keyframes) {
             frames[i] = { e: keyframes[i] };
-              let end = parseInt(i, 10);
-              if(start != 0) {
+
+            var end = parseInt(i, 10);
+
+            if (start != 0) {
                 // TODO: Generalize for all effects instead of having to manually specify everything
-                let diff = end - start;
-                let base = (keyframes[i].blur - keyframes[start].blur) / diff;
-                  for(let j = 1, p = start + 1; j < diff; j++, p++) {
-                    if(!frames[p]) frames[p] = { e: {} }
-                      frames[p].e.blur = keyframes[start].blur + (base * j)
+                var diff = end - start;
+                var base = (keyframes[i].blur - keyframes[start].blur) / diff;
+
+                for (var j = 1, p = start + 1; j < diff; j++, p++) {
+                    if (!frames[p]) frames[p] = { e: {} };
+
+                    frames[p].e.blur = keyframes[start].blur + base * j;
                 }
             }
-              start = end;
+
+            start = end;
         }
-          this.addTimedEffect(instance, frames);
-          return this;
-    }*/
+
+        this.addTimedEffect(instance, frames);
+
+        return this;
+    };
 
     /**
      * Shortcut alias for `addTweenedEffect`
@@ -904,9 +919,11 @@ var MovieClip = function (_Container) {
      * @param {Object} keyframes The map of frames to effect objects
      * @return {PIXI.animate.MovieClip} instance of clip for chaining
      */
-    /*ate(instance, keyframes) {
+
+
+    MovieClip.prototype.ate = function ate(instance, keyframes) {
         return this.addTweenedEffect(instance, keyframes);
-    }*/
+    };
 
     /**
      * Add a tween to the clip
@@ -1635,7 +1652,7 @@ MovieClip.extend = MovieClip.e = function (child) {
 // Assign to namespace
 exports.default = MovieClip;
 
-},{"./Timeline":7,"./utils":12}],4:[function(require,module,exports){
+},{"./Timeline":7,"./utils":13}],4:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -1736,7 +1753,7 @@ var Scene = function (_PIXI$Application) {
 
 exports.default = Scene;
 
-},{"./load":10,"./sound":11}],5:[function(require,module,exports){
+},{"./load":11,"./sound":12}],5:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -1839,7 +1856,7 @@ Object.defineProperty(ShapesCache, 'removeAll', {
 // Assign to namespace
 exports.default = ShapesCache;
 
-},{"./utils":12}],6:[function(require,module,exports){
+},{"./utils":13}],6:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2036,9 +2053,13 @@ exports.default = Timeline;
 
 exports.__esModule = true;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _filterTypes = require("./filterTypes");
 
-//import filterTypes from "./filterTypes";
+var _filterTypes2 = _interopRequireDefault(_filterTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * Provide timeline playback of movieclip
@@ -2129,18 +2150,25 @@ var Tween = function () {
             }
 
             // Add filters to target if they do not already exist
-            /*if(prop === "e") {
-                Object.keys(startProps[prop]).forEach((filter) => {
-                    const type = filterTypes[filter];
-                      if(type) {
-                        target.addFilter(new type(), filter);
-                    } else {
-                        if (typeof console !== "undefined" && console.warn) {
-                            console.warn("Warning: Could not add non-existent filter. Did you remember to add it to filterTypes?");
+            if (prop === "e") {
+                if (target.isWrapper) {
+                    target = target.children[0] || target;
+                }
+
+                Object.keys(startProps[prop]).forEach(function (filter) {
+                    if (target.effects && !target.effects[filter] || !target.effects) {
+                        var type = _filterTypes2.default[filter];
+
+                        if (type) {
+                            target.addFilter(new type(), filter, startProps[prop][filter]);
+                        } else {
+                            if (typeof console !== "undefined" && console.warn) {
+                                console.warn("Warning: Could not add non-existent filter. Did you remember to add it to filterTypes?");
+                            }
                         }
                     }
                 });
-            }*/
+            }
         }
     }
 
@@ -2337,10 +2365,15 @@ function setPropFromShorthand(target, prop, value) {
             target.ma(value); // ma = setMask
             break;
         case "e":
-            // TODO: Test.
-            /*Object.keys(value).forEach((type) => {
-                target.effects[type] = value[type];
-            });*/
+            if (target.isWrapper) {
+                target = target.children[0] || target;
+            }
+
+            Object.keys(value).forEach(function (type) {
+                Object.keys(value[type]).forEach(function (property) {
+                    target.effects[type][property] = value[type][property];
+                });
+            });
             break;
     }
 }
@@ -2348,11 +2381,35 @@ function setPropFromShorthand(target, prop, value) {
 // Assign to namespace
 exports.default = Tween;
 
-},{}],9:[function(require,module,exports){
+},{"./filterTypes":9}],9:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+/**
+ * Contains the collection of filter types useable by Graphics
+ * @memberof PIXI.animate
+ * 
+ * @example
+ * 
+ * filterTypes["blur"] = PIXI.filters.BlurFilter;
+ * this.addTimedEffect(instance1, {
+ *    "0": {
+ *        blur: 0
+ *    },
+ *    "10": {
+ *        blur: 5
+ *    }
+ * });
+ */
+var filterTypes = {};
+
+exports.default = filterTypes;
+
+},{}],10:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
-exports.VERSION = exports.Tween = exports.Timeline = exports.SymbolLoader = exports.ShapesCache = exports.Scene = exports.MovieClip = exports.utils = exports.sound = exports.load = exports.AnimatorTimeline = exports.Animator = undefined;
+exports.filterTypes = exports.VERSION = exports.Tween = exports.Timeline = exports.SymbolLoader = exports.ShapesCache = exports.Scene = exports.MovieClip = exports.utils = exports.sound = exports.load = exports.AnimatorTimeline = exports.Animator = undefined;
 
 var _load = require('./load');
 
@@ -2386,6 +2443,10 @@ var _Timeline = require('./Timeline');
 
 var _Timeline2 = _interopRequireDefault(_Timeline);
 
+var _filterTypes = require('./filterTypes');
+
+var _filterTypes2 = _interopRequireDefault(_filterTypes);
+
 var _Tween = require('./Tween');
 
 var _Tween2 = _interopRequireDefault(_Tween);
@@ -2405,8 +2466,6 @@ var VERSION = '1.3.5';
 /**
  * @namespace PIXI.animate
  */
-
-//import filterTypes from './filterTypes';
 exports.Animator = _Animator2.default;
 exports.AnimatorTimeline = _AnimatorTimeline2.default;
 exports.load = _load2.default;
@@ -2419,8 +2478,9 @@ exports.SymbolLoader = _SymbolLoader2.default;
 exports.Timeline = _Timeline2.default;
 exports.Tween = _Tween2.default;
 exports.VERSION = VERSION;
+exports.filterTypes = _filterTypes2.default;
 
-},{"./Animator":1,"./AnimatorTimeline":2,"./MovieClip":3,"./Scene":4,"./ShapesCache":5,"./SymbolLoader":6,"./Timeline":7,"./Tween":8,"./load":10,"./sound":11,"./utils":12}],10:[function(require,module,exports){
+},{"./Animator":1,"./AnimatorTimeline":2,"./MovieClip":3,"./Scene":4,"./ShapesCache":5,"./SymbolLoader":6,"./Timeline":7,"./Tween":8,"./filterTypes":9,"./load":11,"./sound":12,"./utils":13}],11:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -2585,7 +2645,7 @@ var load = function load(options, parent, complete, basePath, loader, metadata) 
 
 exports.default = load;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -2605,7 +2665,7 @@ exports.__esModule = true;
 // TODO: Implement modern sound system
 exports.default = new PIXI.utils.EventEmitter();
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -2857,7 +2917,7 @@ var AnimateUtils = function () {
 
 exports.default = AnimateUtils;
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 /**
@@ -2866,6 +2926,17 @@ exports.default = AnimateUtils;
  * @memberof PIXI
  */
 var p = PIXI.Container.prototype;
+
+/**
+ * Boolean value defining whether or not element is a wrapper
+ * @property {Object} isWrapper
+ */
+if (!p.hasOwnProperty("isWrapper")) {
+  Object.defineProperty(p, "isWrapper", {
+    value: false,
+    writable: true
+  });
+}
 
 /**
  * Shortcut for `addChild`.
@@ -2896,7 +2967,7 @@ PIXI.Container.extend = PIXI.Container.e = function (child) {
   return child;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 var _utils = require("../animate/utils");
@@ -2914,8 +2985,14 @@ var p = PIXI.DisplayObject.prototype;
 
 /**
  * Key/value container for filters.
+ * @property {Object} effects
  */
-p.effects = {};
+if (!p.hasOwnProperty("effects")) {
+    Object.defineProperty(p, "effects", {
+        value: null,
+        writable: true
+    });
+}
 
 /**
  * Adds a filter to a known position.
@@ -2931,17 +3008,26 @@ p.effects = {};
  * @param  {String} name Name of filter to add
  * @return {PIXI.DisplayObject}
  */
-/*p.addFilter = p.af = function(filter, name) {
-    if(!this.filters) this.filters = [];
+p.addFilter = p.af = function (filter, name, args) {
+    var _this = this;
+
+    if (!this.filters) this.filters = [];
+    if (!this.effects) this.effects = {};
     this.effects[name] = filter;
     this.filters.push(this.effects[name]);
+
+    // Add arguments to filter
+    Object.keys(args).forEach(function (arg) {
+        _this.effects[name][arg] = args[arg];
+    });
+
     return this;
-};*/
+};
 
 // Color Matrix filter
 var ColorMatrixFilter = void 0;
 if (PIXI.filters) {
-  ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
+    ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
 }
 
 /**
@@ -2957,8 +3043,8 @@ if (PIXI.filters) {
  * @return {PIXI.DisplayObject}
  */
 p.setRenderable = p.re = function (renderable) {
-  this.renderable = !!renderable;
-  return this;
+    this.renderable = !!renderable;
+    return this;
 };
 
 /**
@@ -2989,19 +3075,19 @@ p.t = p.setTransform;
  * @return {PIXI.DisplayObject} Instance for chaining
  */
 p.setMask = p.ma = function (mask) {
-  // According to PIXI, only Graphics and Sprites can 
-  // be used as mask, let's ignore everything else, like other
-  // movieclips and displayobjects/containers
-  if (mask) {
-    if (!(mask instanceof PIXI.Graphics) && !(mask instanceof PIXI.Sprite)) {
-      if (typeof console !== "undefined" && console.warn) {
-        console.warn("Warning: Masks can only be PIXI.Graphics or PIXI.Sprite objects.");
-      }
-      return this;
+    // According to PIXI, only Graphics and Sprites can 
+    // be used as mask, let's ignore everything else, like other
+    // movieclips and displayobjects/containers
+    if (mask) {
+        if (!(mask instanceof PIXI.Graphics) && !(mask instanceof PIXI.Sprite)) {
+            if (typeof console !== "undefined" && console.warn) {
+                console.warn("Warning: Masks can only be PIXI.Graphics or PIXI.Sprite objects.");
+            }
+            return this;
+        }
     }
-  }
-  this.mask = mask;
-  return this;
+    this.mask = mask;
+    return this;
 };
 
 /**
@@ -3017,8 +3103,8 @@ p.setMask = p.ma = function (mask) {
  * @return {PIXI.DisplayObject} Instance for chaining
  */
 p.setAlpha = p.a = function (alpha) {
-  this.alpha = alpha;
-  return this;
+    this.alpha = alpha;
+    return this;
 };
 
 /**
@@ -3034,19 +3120,19 @@ p.setAlpha = p.a = function (alpha) {
  * @return {PIXI.DisplayObject} Object for chaining
  */
 p.setTint = p.i = function (tint) {
-  if (typeof tint === "string") {
-    tint = _utils2.default.hexToUint(tint);
-  }
-  // this.tint = tint
-  // return this;
-  // TODO: Replace with DisplayObject.tint setter
-  // once the functionality is added to Pixi.js, for
-  // now we'll use the slower ColorMatrixFilter to handle
-  // the color transformation
-  var r = tint >> 16 & 0xFF;
-  var g = tint >> 8 & 0xFF;
-  var b = tint & 0xFF;
-  return this.c(r / 255, 0, g / 255, 0, b / 255, 0);
+    if (typeof tint === "string") {
+        tint = _utils2.default.hexToUint(tint);
+    }
+    // this.tint = tint
+    // return this;
+    // TODO: Replace with DisplayObject.tint setter
+    // once the functionality is added to Pixi.js, for
+    // now we'll use the slower ColorMatrixFilter to handle
+    // the color transformation
+    var r = tint >> 16 & 0xFF;
+    var g = tint >> 8 & 0xFF;
+    var b = tint & 0xFF;
+    return this.c(r / 255, 0, g / 255, 0, b / 255, 0);
 };
 
 /**
@@ -3072,15 +3158,15 @@ p.setTint = p.i = function (tint) {
  * @return {PIXI.DisplayObject} Object for chaining
  */
 p.setColorTransform = p.c = function (r, rA, g, gA, b, bA) {
-  var filter = this.colorTransformFilter;
-  filter.matrix[0] = r;
-  filter.matrix[4] = rA;
-  filter.matrix[6] = g;
-  filter.matrix[9] = gA;
-  filter.matrix[12] = b;
-  filter.matrix[14] = bA;
-  this.filters = [filter];
-  return this;
+    var filter = this.colorTransformFilter;
+    filter.matrix[0] = r;
+    filter.matrix[4] = rA;
+    filter.matrix[6] = g;
+    filter.matrix[9] = gA;
+    filter.matrix[12] = b;
+    filter.matrix[14] = bA;
+    this.filters = [filter];
+    return this;
 };
 
 /**
@@ -3088,14 +3174,14 @@ p.setColorTransform = p.c = function (r, rA, g, gA, b, bA) {
  * @name {PIXI.filters.ColorMatrixFilter} PIXI.DisplayObject#colorTransformFilter
  */
 if (!p.hasOwnProperty('colorTransformFilter')) {
-  Object.defineProperty(p, 'colorTransformFilter', {
-    set: function set(filter) {
-      this._colorTransformFilter = filter;
-    },
-    get: function get() {
-      return this._colorTransformFilter || new ColorMatrixFilter();
-    }
-  });
+    Object.defineProperty(p, 'colorTransformFilter', {
+        set: function set(filter) {
+            this._colorTransformFilter = filter;
+        },
+        get: function get() {
+            return this._colorTransformFilter || new ColorMatrixFilter();
+        }
+    });
 }
 
 /**
@@ -3113,13 +3199,13 @@ if (!p.hasOwnProperty('colorTransformFilter')) {
  * @return {PIXI.DisplayObject} THe child
  */
 PIXI.DisplayObject.extend = PIXI.DisplayObject.e = function (child) {
-  child.prototype = Object.create(p);
-  child.prototype.__parent = p;
-  child.prototype.constructor = child;
-  return child;
+    child.prototype = Object.create(p);
+    child.prototype.__parent = p;
+    child.prototype.constructor = child;
+    return child;
 };
 
-},{"../animate/utils":12}],15:[function(require,module,exports){
+},{"../animate/utils":13}],16:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3408,7 +3494,7 @@ p.rs = function () {
   return this;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3439,7 +3525,7 @@ PIXI.Sprite.extend = PIXI.Sprite.e = function (child) {
   return child;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3565,7 +3651,7 @@ var isUndefinedOr = function isUndefinedOr(value, defaultValue) {
     return value === undefined ? defaultValue : value;
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3603,7 +3689,7 @@ exports.default = {
     Text: _Text2.default
 };
 
-},{"./Container":13,"./DisplayObject":14,"./Graphics":15,"./Sprite":16,"./Text":17}],19:[function(require,module,exports){
+},{"./Container":14,"./DisplayObject":15,"./Graphics":16,"./Sprite":17,"./Text":18}],20:[function(require,module,exports){
 'use strict';
 
 // If we're in the browser make sure PIXI is available
@@ -3629,7 +3715,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = PIXI.animate;
 }
 
-},{"./animate":9,"./mixins":18}]},{},[19])(19)
+},{"./animate":10,"./mixins":19}]},{},[20])(20)
 });
 
 

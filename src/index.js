@@ -218,12 +218,12 @@ function addTimedEffect(timeline, keyframes) {
 
         if(start != 0) {
             let diff = end - start;
-            let base = (keyframes[i].blur - keyframes[start].blur) / diff;
+            let base = (keyframes[i].blur.blur - keyframes[start].blur.blur) / diff;
 
             for(let j = 1; j < diff; j++) {
                 frames[start + j] = {
                     e: {
-                        blur: keyframes[start].blur + (base * j)
+                        blur: { blur: keyframes[start].blur.blur + (base * j) }
                     }
                 };
 
@@ -257,6 +257,9 @@ function addTimedEffect(timeline, keyframes) {
     var Text = PIXI.Text;
     var Graphics = PIXI.Graphics;
     var shapes = PIXI.animate.ShapesCache;
+    
+    // Filters
+    PIXI.animate.filterTypes["blur"] = PIXI.filters.BlurFilter;
 
     // Sounds
     var TheFurthestRingSound = new BWAudio("./sounds/TheFurthestRing.mp3", 1, true);
@@ -6340,19 +6343,12 @@ function addTimedEffect(timeline, keyframes) {
         this.addChild(instance1);
     });
 
-    lib.BG3_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, {
-            duration: 6
-        });
+    lib.BG3_wrap = Container.extend(function() {
+        Container.call(this);
 
-        this.inner = new lib.BG3();
+        this.isWrapper = true;
         
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
+        this.addChild(new lib.BG3());
     });
 
     lib.BG3 = MovieClip.extend(function () {
@@ -6399,18 +6395,13 @@ function addTimedEffect(timeline, keyframes) {
             .addTimedChild(instance6, 5, 1);
     });
 
-    lib.CrackBack_2_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, { duration: 6 });
+    lib.CrackBack_2_wrap = Container.extend(function() {
+        Container.call(this);
+
+        this.isWrapper = true;
         
-        this.inner = new lib.CrackBack_2();
-        
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
-    })
+        this.addChild(new lib.CrackBack_2());
+    });
 
     lib.CrackBack_2 = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -8889,17 +8880,12 @@ function addTimedEffect(timeline, keyframes) {
             .addTimedChild(instance1);
     });
 
-    lib.Coin_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, { duration: 6 });
+    lib.Coin_wrap = Container.extend(function() {
+        Container.call(this);
         
-        this.inner = new lib.Coin();
+        this.isWrapper = true;
         
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
+        this.addChild(new lib.Coin());
     })
 
     lib.Coin = MovieClip.extend(function () {
@@ -8946,18 +8932,13 @@ function addTimedEffect(timeline, keyframes) {
             .addTimedChild(instance6, 5, 1);
     });
 
-    lib.Vriska6_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, { duration: 6 });
+    lib.Vriska6_wrap = Container.extend(function() {
+        Container.call(this);
+
+        this.isWrapper = true;
         
-        this.inner = new lib.Vriska6();
-        
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
-    })
+        this.addChild(new lib.Vriska6());
+    });
 
     lib.Vriska6 = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -9003,18 +8984,13 @@ function addTimedEffect(timeline, keyframes) {
             .addTimedChild(instance6, 5, 1);
     });
 
-    lib.BG6_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, { duration: 6 });
+    lib.BG6_wrap = Container.extend(function() {
+        Container.call(this);
+
+        this.isWrapper = true;
         
-        this.inner = new lib.BG6();
-        
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
-    })
+        this.addChild(new lib.BG6());
+    });
 
     lib.BG6 = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -9060,18 +9036,13 @@ function addTimedEffect(timeline, keyframes) {
             .addTimedChild(instance6, 5, 1);
     });
 
-    lib.Pocket_wrap = MovieClip.extend(function() {
-        MovieClip.call(this, { duration: 6 });
+    lib.Pocket_wrap = Container.extend(function() {
+        Container.call(this);
+
+        this.isWrapper = true;
         
-        this.inner = new lib.Pocket();
-        
-        this.addTimedChild(this.inner, 0, 6, {
-            "0": {
-                x: 0,
-                y: 0,
-            }
-        });
-    })
+        this.addChild(new lib.Pocket());
+    });
 
     lib.Pocket = MovieClip.extend(function () {
         MovieClip.call(this, {
@@ -29652,10 +29623,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "388": {
-                    blur: 18
+                    blur: { blur: 18 }
                 },
                 "486": {
-                    blur: 0
+                    blur: { blur: 0 }
                 }
             }))
             /*.addTimedMask(instance32, {
@@ -30045,10 +30016,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "369": {
-                    blur: 9
+                    blur: { blur: 9 }
                 },
                 "466": {
-                    blur: 0
+                    blur: { blur: 0 }
                 }
             }))
             .addTimedChild(instance36, 510, 4, {
@@ -32706,10 +32677,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "862": {
-                    blur: 0
+                    blur: { blur: 0 }
                 },
                 "951": {
-                    blur: 5
+                    blur: { blur: 5 }
                 }
             }))
             /*.addTimedEffect(instance49, 766, 862 - 766, {
@@ -33725,10 +33696,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "766": {
-                    blur: 5
+                    blur: { blur: 5 }
                 },
                 "862": {
-                    blur: 0
+                    blur: { blur: 0 }
                 }
             }))
             /*.addTimedEffect(instance48, 766, 862 - 766, {
@@ -34744,10 +34715,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "766": {
-                    blur: 5
+                    blur: { blur: 5 }
                 },
                 "862": {
-                    blur: 0
+                    blur: { blur: 0 }
                 }
             }))
             /*.addTimedEffect(instance47, 862, 951 - 862, {
@@ -35763,10 +35734,10 @@ function addTimedEffect(timeline, keyframes) {
                 }
             }, {
                 "862": {
-                    blur: 0
+                    blur: { blur: 0 }
                 },
                 "951": {
-                    blur: 5
+                    blur: { blur: 5 }
                 }
             }))
             /*.addTimedMask(instance56, {
