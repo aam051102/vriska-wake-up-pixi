@@ -23,6 +23,14 @@ PIXI.Loader.shared.onComplete.add((e) => {
     })
 });
 
+// Replace main loop to update when tab is blurred
+PIXI.Ticker.shared.autoStart = false;
+PIXI.Ticker.shared.minFPS = 1;
+
+MainLoop.setUpdate((delta) => {
+    PIXI.Ticker.shared.update();
+}).start();
+
 // Load scene
 var scene = new PIXI.animate.Scene({
     width: 950,
