@@ -262,6 +262,7 @@ function addTimedEffect(timeline, keyframes) {
     PIXI.animate.filterTypes["blur"] = PIXI.filters.BlurFilter;
 
     // Sounds
+    // TODO: Have audio load through PIXI.
     var TheFurthestRingSound = new BWAudio("./sounds/TheFurthestRing.mp3", 1, true);
     var HeartbeatSound = new BWAudio("./sounds/sound 102.mp3", 1, true);
     var DramaSound = new BWAudio("./sounds/DRAMA.mp3", 1, false);
@@ -10025,13 +10026,12 @@ function addTimedEffect(timeline, keyframes) {
                     y: 325
                 }
             })
-            /*.addTimedMask(instance12, {
-                "44": instance8.mask,
-                "305": null
-            })*/
+            .addTimedMask(instance12, {
+                "45": instance8.mask,
+            })
             .addTimedChild(instance12, 45, 259, {
                 "45": {
-                    m: instance8.mask,
+                    //m: instance8.mask,
                     x: 535,
                     y: 325,
                     c: [

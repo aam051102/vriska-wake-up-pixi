@@ -1,6 +1,6 @@
 /*!
  * pixi-animate - v1.3.5
- * Compiled Sun, 21 Feb 2021 21:41:09 UTC
+ * Compiled Mon, 22 Feb 2021 12:16:37 UTC
  *
  * pixi-animate is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -961,7 +961,6 @@ var MovieClip = function (_Container) {
 
 
     MovieClip.prototype.addKeyframe = function addKeyframe(instance, properties, startFrame) {
-
         var timeline = this._getChildTimeline(instance);
         this._parseProperties(properties);
         timeline.addKeyframe(properties, startFrame);
@@ -1357,6 +1356,7 @@ var MovieClip = function (_Container) {
                     // set the position within that tween
                     //and break the loop to move onto the next timeline
                     tween.setPosition(currentFrame);
+
                     break;
                 }
             }
@@ -1985,9 +1985,28 @@ p.addTween = function (properties, startFrame, duration, ease) {
 p.addKeyframe = function (properties, startFrame) {
     this.extendLastFrame(startFrame - 1);
     var startProps = Object.assign({}, this._currentProps, properties);
-    //create the new Tween and add it to the list
-    var tween = new _Tween2.default(this.target, startProps, null, startFrame, 0);
-    this.push(tween);
+
+    // Look for tween with same starting frame
+    var tween = void 0;
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i].startFrame == startFrame) {
+            tween = this[i];
+            break;
+        }
+    }
+
+    if (!tween) {
+        //create the new Tween and add it to the list
+        tween = new _Tween2.default(this.target, startProps, null, startFrame, 0);
+        this.push(tween);
+    } else {
+        // Merge tweens
+        var prop = void 0;
+        for (prop in startProps) {
+            tween.endProps[prop] = tween.startProps[prop] = startProps[prop];
+        }
+    }
+
     Object.assign(this._currentProps, tween.endProps);
 };
 
@@ -2037,6 +2056,8 @@ p.getPropFromShorthand = function (prop) {
             return target.visible;
         case 'm':
             return target.mask;
+        case 'e':
+            return target.effects;
         // case 't':
         //   return target.tint;
         //not sure if we'll actually handle graphics this way?
@@ -2928,7 +2949,8 @@ exports.default = AnimateUtils;
 var p = PIXI.Container.prototype;
 
 /**
- * Boolean value defining whether or not element is a wrapper
+ * Boolean value defining whether or not element is a wrapper.
+ * If an element is a wrapper, there will be made an attempt to apply filters to the first child, with a fallback to itself.
  * @property {Object} isWrapper
  */
 if (!p.hasOwnProperty("isWrapper")) {
