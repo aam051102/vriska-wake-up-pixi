@@ -1,6 +1,6 @@
 /*!
  * pixi-animate - v1.3.5
- * Compiled Mon, 22 Feb 2021 12:16:37 UTC
+ * Compiled Mon, 22 Feb 2021 14:21:06 UTC
  *
  * pixi-animate is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -1883,10 +1883,17 @@ var SymbolLoader = {
             next();
         } else if (url.search(/\.shapes\.(json|txt)$/i) > -1) {
             _ShapesCache2.default.add(resource.name, data);
-        } else if (data.nodeName && data.nodeName === 'IMG') {
-            // Add individual images to the texture cache by their
-            // short symbol name, not the URL
-            PIXI.Texture.addToCache(resource.texture, resource.name);
+        } else if (data.nodeName) {
+            if (data.nodeName === 'IMG') {
+                // Add individual images to the texture cache by their
+                // short symbol name, not the URL
+                /*PIXI.Texture.addToCache(
+                    resource.texture,
+                    resource.name
+                );*/
+            } else if (data.nodeName === 'AUDIO') {
+                console.log(resource);
+            }
         }
         next();
     }

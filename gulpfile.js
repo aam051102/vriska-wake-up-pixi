@@ -54,7 +54,7 @@ function imagesBuild(next) {
 }
 
 function jsBuild(next) {
-    gulp.src("./src/**/*.js")
+    gulp.src("./src/*.js")
         .pipe(
             babel({
                 presets: ["@babel/preset-env"],
@@ -84,11 +84,15 @@ function jsBuild(next) {
         .pipe(gulp.dest("./dist/"))
         .pipe(connect.reload());
 
+    gulp.src("./src/libs/*.js")
+        .pipe(gulp.dest("./dist/libs/"))
+        .pipe(connect.reload());
+
     next();
 }
 
 function js(next) {
-    gulp.src("./src/**/*.js")
+    gulp.src("./src/*.js")
         .pipe(
             babel({
                 presets: ["@babel/preset-env"],
@@ -96,6 +100,10 @@ function js(next) {
             }).on("error", (err) => console.log(err))
         )
         .pipe(gulp.dest("./dist/"))
+        .pipe(connect.reload());
+
+    gulp.src("./src/libs/*.js")
+        .pipe(gulp.dest("./dist/libs/"))
         .pipe(connect.reload());
 
     next();

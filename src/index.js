@@ -1,211 +1,3 @@
-/**
- * The BWAudio class represents a
- * @class BWAudio
- * @param {String} url The source URL
- * @param {Number} volume The volume to play at
- * @param {Boolean} looping Whether or not the audio should loop
- * @constructor
- */
-class BWAudio {
-    constructor(url, volume, looping) {
-        this.url = url;
-        this.volume = volume || 1;
-        this.looping = looping || false;
-        this.isPlaying = false;
-        this.isPaused = false;
-        this.isWebAudio;
-        this.source;
-
-        this.onerror = (e) => {
-            console.error(e);
-        };
-
-        this.oncanplay = () => {};
-
-        this.onended = () => {};
-
-        if (window.AudioContext || window.webkitAudioContext) {
-            this.initWebAudio();
-            this.isWebAudio = true;
-        } else {
-            this.initFallbackAudio();
-            this.isWebAudio = false;
-        }
-    }
-
-    /**
-     * Initiates fallback audio if Webkit Audio not available
-     * @method BWAudio#initFallbackAudio
-     * @private
-     */
-    initFallbackAudio() {
-        this.source = new Audio(this.url);
-        this.source.volume = this.volume;
-        this.source.loop = this.looping;
-        this.source.oncanplay = this.oncanplay;
-        this.source.onended = this.onended;
-    }
-
-    /**
-     * Initiates Webkit Audio
-     * @method BWAudio#initWebAudio
-     * @private
-     */
-    initWebAudio() {
-        this.aCtx;
-        if (window.webkitAudioContext) {
-            this.aCtx = new window.webkitAudioContext();
-        } else {
-            this.aCtx = new window.AudioContext();
-        }
-
-        if (this.aCtx.state != "running") {
-            this.pageInteraction = document.addEventListener("click", () => {
-                this.aCtx.resume().then(() => {
-                    document.removeEventListener("click", this.pageInteraction);
-                });
-            });
-        }
-
-        this.source = this.aCtx.createBufferSource();
-        this.buffer;
-        this.gainNode = this.aCtx.createGain();
-        this.gainNode.gain.value = this.volume;
-        this.gainNode.connect(this.aCtx.destination);
-
-        if (window.fetch) {
-            fetch(this.url)
-                .then((resp) => resp.arrayBuffer())
-                .then((buf) => this.aCtx.decodeAudioData(buf))
-                .then((decoded) => {
-                    this.source.buffer = this.buffer = decoded;
-                    this.source.loop = this.looping;
-                    this.source.connect(this.gainNode);
-                    this.source.onended = this.onended;
-                    this.oncanplay();
-                })
-                .catch(onerror);
-        } else {
-            let xhr = new XMLHttpRequest();
-
-            xhr.open("GET", this.url);
-            xhr.responseType = "arraybuffer";
-
-            xhr.addEventListener("load", (res) => {
-                this.aCtx.decodeAudioData(
-                    xhr.response,
-                    (decoded) => {
-                        this.source.buffer = this.buffer = decoded;
-                        this.source.loop = this.looping;
-                        this.source.connect(this.gainNode);
-                        this.source.onended = this.onended;
-                        this.oncanplay();
-                    },
-                    this.onerror
-                );
-            });
-
-            xhr.addEventListener("error", this.onerror);
-
-            xhr.send();
-        }
-    }
-
-    /**
-     * Sets the volume of the audio
-     * @method BWAudio#setVolume
-     * @param {Number} volume The target volume
-     * @public
-     */
-    setVolume(volume) {
-        if (this.isWebAudio) {
-            this.gainNode.gain.value = this.volume = volume;
-        } else {
-            this.source.volume = this.volume = volume;
-        }
-    }
-
-    /**
-     * Starts the audio from the beginning
-     * @method BWAudio#start
-     * @public
-     */
-    start() {
-        if (!this.isPlaying) {
-            if (this.isWebAudio) {
-                if (this.aCtx.state == "running") {
-                    this.source.start(0);
-                } else {
-                    return;
-                }
-            } else {
-                this.source.play();
-            }
-
-            this.isPlaying = true;
-            this.isPaused = false;
-        }
-    }
-
-    /**
-     * Stops the audio completely
-     * @method BWAudio#stop
-     * @public
-     */
-    stop() {
-        if (this.isPlaying) {
-            this.isPlaying = false;
-
-            if (this.isWebAudio) {
-                this.source.stop(0);
-                this.source = this.aCtx.createBufferSource();
-                this.source.buffer = this.buffer;
-                this.source.connect(this.gainNode);
-                this.source.loop = this.looping;
-                this.source.onended = this.onended;
-            } else {
-                this.source.pause();
-            }
-        }
-    }
-
-    /**
-     * Pauses the audio
-     * @method BWAudio#pause
-     * @public
-     */
-    pause() {
-        if (this.isPlaying && !this.isPaused) {
-            if (this.isWebAudio) {
-                this.aCtx.suspend().then(() => {
-                    this.isPaused = true;
-                });
-            } else {
-                this.source.pause();
-                this.isPaused = true;
-            }
-        }
-    }
-
-    /**
-     * Resumes playing of paused audio
-     * @method BWAudio#resume
-     * @public
-     */
-    resume() {
-        if (this.isPlaying && this.isPaused) {
-            if (this.isWebAudio) {
-                this.aCtx.resume().then(() => {
-                    this.isPaused = false;
-                });
-            } else {
-                this.source.play();
-                this.isPaused = false;
-            }
-        }
-    }
-}
-
 function addTimedEffect(timeline, keyframes) {
     const frames = {};
 
@@ -246,7 +38,6 @@ function addTimedEffect(timeline, keyframes) {
 
 
 (function (PIXI, lib) {
-
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     //PIXI.settings.ROUND_PIXELS = true;
 
@@ -262,15 +53,26 @@ function addTimedEffect(timeline, keyframes) {
     PIXI.animate.filterTypes["blur"] = PIXI.filters.BlurFilter;
 
     // Sounds
-    // TODO: Have audio load through PIXI.
-    var TheFurthestRingSound = new BWAudio("./sounds/TheFurthestRing.mp3", 1, true);
-    var HeartbeatSound = new BWAudio("./sounds/sound 102.mp3", 1, true);
-    var DramaSound = new BWAudio("./sounds/DRAMA.mp3", 1, false);
+    PIXI.sound.add("TheFurthestRing", {
+        url: 'sounds/TheFurthestRing.mp3',
+        preload: true,
+        loop: true,
+    });
+
+    PIXI.sound.add("sound 102", {
+        url: 'sounds/sound 102.mp3',
+        preload: true,
+        loop: true,
+    });
+
+    PIXI.sound.add("DRAMA", {
+        url: 'sounds/DRAMA.mp3',
+        preload: true,
+        loop: false,
+    });
 
     function setVolume(volume) {
-        TheFurthestRingSound.setVolume(volume);
-        HeartbeatSound.setVolume(volume);
-        DramaSound.setVolume(volume);
+        PIXI.sound.volumeAll = volume;
     }
     
     // Library
@@ -49271,7 +49073,7 @@ function addTimedEffect(timeline, keyframes) {
                 music1 = mySound.play(0, int.MAX_VALUE);
                 */
 
-                TheFurthestRingSound.start();
+                PIXI.sound.play("TheFurthestRing");
             }, 18)
             .addAction(function () {
                 /* stop();
@@ -49296,15 +49098,16 @@ function addTimedEffect(timeline, keyframes) {
                 music2 = sound2.play(0, int.MAX_VALUE);
                 */
 
-               HeartbeatSound.start();
+               PIXI.sound.play("sound 102");
             }, 954)
             .addAction(function () {
                 /* stop();*/
                 this.stop();
             }, 1307)
             .addAction(function () {
-                TheFurthestRingSound.stop();
-                HeartbeatSound.stop();
+               PIXI.sound.stop("TheFurthestRing");
+               PIXI.sound.stop("sound 102");
+
 
                 /* music1.stop();
                 music2.stop();
@@ -49315,7 +49118,7 @@ function addTimedEffect(timeline, keyframes) {
             }, 1308)
             .addAction(function () {
                 //this.playSound('DRAMA');
-                DramaSound.start();
+                PIXI.sound.play("DRAMA");
             }, 1308)
             .addAction(function () {
                 this.stop();
@@ -49350,11 +49153,6 @@ function addTimedEffect(timeline, keyframes) {
     });
 
     lib.S_VriskaWake3_PixiAnimate.assets = {
-        // Sounds
-        "DRAMA": "sounds/DRAMA.mp3",
-        "sound 102": "sounds/sound 102.mp3",
-        "TheFurthestRing": "sounds/TheFurthestRing.mp3",
-
         // Shapes
         "S_VriskaWake3_PixiAnimate": "images/S_VriskaWake3_PixiAnimate.shapes.json",
     };
